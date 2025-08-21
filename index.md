@@ -269,38 +269,58 @@ Create an OpenAPI schema for the Serper search function:
 
 ```json
 {
-    "openapi": "3.0.1",
-    "info": {
-        "title": "Web Search API",
-        "version": "1.0.0"
-    },
-    "paths": {
-        "/web_search": {
-            "post": {
-                "operationId": "web_search_function",
-                "description": "Search the web for current information",
-                "parameters": [
-                    {
-                        "name": "query",
-                        "in": "query",
-                        "required": true,
-                        "schema": {"type": "string"}
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Search results",
-                        "content": {
-                            "application/json": {
-                                "schema": {"type": "object"}
-                            }
-                        }
-                    }
-                }
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Web Search API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/web_search": {
+      "post": {
+        "operationId": "web_search_function",
+        "description": "Search the web for current information",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "The search query"
+                  },
+                  "num_results": {
+                    "type": "integer",
+                    "description": "Number of results to return",
+                    "default": 5
+                  },
+                  "search_type": {
+                    "type": "string",
+                    "description": "Type of search: search, news, images, shopping",
+                    "default": "search"
+                  }
+                },
+                "required": ["query"]
+              }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
         }
+      }
     }
+  }
 }
+
 ```
 
 ## Step 4: Create Bedrock Agent using AWS CLI
