@@ -272,116 +272,27 @@ Create an OpenAPI schema for the Serper search function:
     "openapi": "3.0.1",
     "info": {
         "title": "Web Search API",
-        "description": "API for performing web searches using Serper with support for multiple search types",
         "version": "1.0.0"
     },
     "paths": {
-        "/search": {
+        "/web_search": {
             "post": {
-                "description": "Performs a web search and returns current information from the internet. Can handle multiple searches for complex queries.",
+                "operationId": "web_search_function",
+                "description": "Search the web for current information",
                 "parameters": [
                     {
                         "name": "query",
                         "in": "query",
-                        "description": "The search query to find current information. Be specific and targeted for best results.",
                         "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "num_results",
-                        "in": "query",
-                        "description": "Number of search results to return (1-10, default: 5)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "maximum": 10,
-                            "default": 5
-                        }
-                    },
-                    {
-                        "name": "search_type",
-                        "in": "query",
-                        "description": "Type of search to perform",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": ["search", "news", "images", "shopping"],
-                            "default": "search"
-                        }
+                        "schema": {"type": "string"}
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successful search results with comprehensive information",
+                        "description": "Search results",
                         "content": {
                             "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "search_results": {
-                                            "type": "object",
-                                            "properties": {
-                                                "organic": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "title": {"type": "string"},
-                                                            "link": {"type": "string"},
-                                                            "snippet": {"type": "string"},
-                                                            "position": {"type": "integer"},
-                                                            "date": {"type": "string"}
-                                                        }
-                                                    }
-                                                },
-                                                "answer_box": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "answer": {"type": "string"},
-                                                        "title": {"type": "string"},
-                                                        "link": {"type": "string"}
-                                                    }
-                                                },
-                                                "knowledge_graph": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "title": {"type": "string"},
-                                                        "description": {"type": "string"},
-                                                        "attributes": {"type": "object"}
-                                                    }
-                                                },
-                                                "related_searches": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "query": {"type": "string"}
-                                                        }
-                                                    }
-                                                },
-                                                "news": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "title": {"type": "string"},
-                                                            "link": {"type": "string"},
-                                                            "snippet": {"type": "string"},
-                                                            "date": {"type": "string"},
-                                                            "source": {"type": "string"}
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "query": {"type": "string"},
-                                        "search_type": {"type": "string"},
-                                        "total_results": {"type": "integer"}
-                                    }
-                                }
+                                "schema": {"type": "object"}
                             }
                         }
                     }
