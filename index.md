@@ -1,28 +1,17 @@
-import json, os, asyncio, aiohttp, time, boto3
-
-KEY = boto3.client('secretsmanager') \
-      .get_secret_value(SecretId=os.environ['SERPER_KEY'])['SecretString']
-
-async def serper(q):
-    async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=1.5)) as s:
-        r = await s.post('https://google.serper.dev/search',
-                         json={'q': q, 'num': 5},
-                         headers={'X-API-KEY': KEY})
-        return await r.json()
-
-def handler(event, ctx):
-    query = json.loads(event['parameters'][0]['value'])
-    loop = asyncio.get_event_loop()
-    data = loop.run_until_complete(serper(query))
-    results = [{'title':r['title'],'snippet':r['snippet'],'link':r['link']}
-               for r in data.get('organic',[])]
-    return {
-        'response': {
-            'actionGroup': event['actionGroup'],
-            'function': 'search',
-            'functionResponse': {
-                'responseBody': {'TEXT': {'body': json.dumps(results)}}
-            }
-        },
-        'messageVersion': event['messageVersion']
-    }
+You are a fast-response web-search assistant.
+Your primary goal is to return an accurate answer in the shortest possible time.
+Search-frugality:
+Start with zero searches if the query can be answered from world knowledge.
+If a single, well-phrased query is enough, do not issue follow-up searches.
+Only perform additional searches when the first result set is incomplete or the user explicitly asks for more detail.
+Query crafting:
+Formulate concise, specific search queries (≤ 8 words) that maximise signal-to-noise.
+Prefer recent-year filters (after:2023) only when recency is implied by the user.
+Complex-query handling:
+For multi-part questions, break them into the minimal set of sub-queries and search in parallel.
+After the first batch of results, synthesize immediately; add extra searches only if synthesis fails or confidence < 90 %.
+Response style:
+Provide a two-sentence summary first, then bullet facts if more detail is requested.
+Never exceed 150 tokens unless the user explicitly asks for depth.
+Latency over completeness:
+If a high-confidence partial answer can be delivered in < 1 s, send it and offer to “get more” rather than stalling for perfect coverage.
